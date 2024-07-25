@@ -68,9 +68,17 @@ When you make your plot, you will likely find that the axis range is being set b
 
 
 ```{r}
-### Your code here
-
-
+Trips <- Trips %>%
+  mutate(duration = as.numeric(difftime(edate, sdate, units = "mins")))
+Trips_filtered <- Trips %>%
+  filter(duration <= 1440)
+Trips_filtered %>%
+  ggplot(aes(x = client, y = duration)) +
+  geom_boxplot() +
+  labs(title = "Distribution of Bike Rental Durations by the type of Client",
+       x = "Client Type",
+       y = "Duration in minutes") +
+  theme_minimal()
 ```
 
 
@@ -102,47 +110,81 @@ You can use [Figure 18.3](https://dtkaplan.github.io/DataComputingEbook/project-
 ### Day of Year
 
 ```{r}
-### Your Code Here
-
+Trips_dty <- Trips %>%
+  mutate(day_of_year = as.numeric(format(sdate, "%j")))
+Trips_dty %>%
+  ggplot(aes(x = day_of_year)) +
+  geom_histogram(binwidth = 1, fill = "blue", color = "black") +
+  labs(title = "Bike Usage by Day of the Year",
+       x = "Day of the Year",
+       y = "Count") +
+  theme_minimal()
 ```
 
 
-My observations here..... 
+It can be noted that this service starts from October. It has its most users on its 275th day. It has its least users on its 335th day
 
 
 ### Day of Week
 
 ```{r}
-### Your Code Here
-
+Trips_dow <- Trips %>%
+  mutate(day_of_week = factor(format(sdate, "%A"), levels = c("Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday")))
+Trips_dow %>%
+  ggplot(aes(x = day_of_week)) +
+  geom_bar(fill = "blue", color = "black") +
+  labs(title = "Bike Usage by Day of the Week",
+       x = "Day of the Week",
+       y = "Count") +
+  theme_minimal()
 ```
 
 
-My observations here..... 
+I decided to go with a bar graph as opposed to a histogram or a density plot here cause it is the best form of visualization for these categories. It has the highest use in a week on Thursdays and the least use on Sundays.
 
 
 
 ### Hour of Day
 
 ```{r}
-### Your Code Here
+Trips_hour <- Trips %>%
+  mutate(hour_of_day = as.numeric(format(sdate, "%H")))
 
+Trips_hour %>%
+  ggplot(aes(x = hour_of_day)) +
+  geom_histogram(binwidth = 1, fill = "green", color = "black") +
+  labs(title = "Histogram of Bike Usage by Hour of the Day",
+       x = "Hour of the Day",
+       y = "Count") +
+  theme_minimal()
 ```
 
 
-My observations here..... 
+We can see at hour 17 of the day is when the bikes are most used.
+They are least used at hour 4 of the day.
 
-
+After the first 5-6 hours of the day, they seem to be used extensively.
 
 ### Minute of Hour
 
 ```{r}
-### Your Code Here
+Trips_minute <- Trips %>%
+  mutate(minute_of_hour = as.numeric(format(sdate, "%M")))
+
+Trips_minute %>%
+  ggplot(aes(x = minute_of_hour)) +
+  geom_histogram(binwidth = 1, fill = "red", color = "black") +
+  labs(title = "Histogram of Bike Usage by Minute of the Hour",
+       x = "Minute of the Hour",
+       y = "Count") +
+  theme_minimal()
 
 ```
 
 
-My observations here..... 
+They are used the most on the 43rd minute of the hour.
+They are used the least in what seems to be the 60th minute of the hour. 
+However, they seem to be used uniformly throughout the hour.
 
 
 ## Question 3: Grouping
