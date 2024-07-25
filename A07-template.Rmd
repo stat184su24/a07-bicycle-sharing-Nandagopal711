@@ -241,6 +241,12 @@ Simple2 <-
 ```
 
 Look at the `head()` of `Simple` and `Simple2` and make sure you understand how they are related to `Stations.`
+```{r}
+head(Simple)
+```
+```{r}
+head(Simple2)
+```
 
 
 The joining of `Simple` and `Simple2` should match every station to every other station. Since a ride can start and end at the same station, it also makes sense to match each station to itself. This sort of matching does not make use of any matching variables; everything is matched to everything else. This is called a **full outer join**. See Lecture L09 to read more about joins. Note, we can also use the `merge()` function for full outer joins. See the help file for more details.  
@@ -261,6 +267,10 @@ PairDistances <-
 
 ```
 
+```{r}
+print(PairDistances)
+```
+
 
 Once you have `PairDistances`, you can join it with `Trips` to calculate the start-to-end distance of each trip. An `inner_join()` is appropriate for finding the distance of each ride.
 
@@ -271,11 +281,35 @@ Our goal here is to recreate [Figure 18.5](https://dtkaplan.github.io/DataComput
 
 
 ```{r}
-### My code here
+Trips_with_distances <- Trips %>%
+  inner_join(PairDistances, by = c("sstation" = "sstation", "estation" = "estation"))
+head(Trips_with_distances)
 
 ```
 
+```{r}
+Trips_with_distances %>%
+  ggplot(aes(x = distance)) +
+  geom_histogram(binwidth = 0.5, fill = "blue", color = "black") +
+  labs(title = "Distribution of Ride Distances",
+       x = "Distance (km)",
+       y = "Count") +
+  theme_minimal()
+```
+This plot shows that the inner joined data frame's distances with the trips dataset are easier to plot and most of their trips are about 1 km in distance and they mostly stay within 1-5 kms.
 
+```{r}
+PairDistances %>%
+  ggplot(aes(x = distance)) +
+  geom_histogram(binwidth = 0.5, fill = "red", color = "black") +
+  labs(title = "Distribution of Pairwise Station Distances",
+       x = "Distance (km)",
+       y = "Count") +
+  theme_minimal()
+```
+Paired dataset shows that while most of the trips are between 1-10 kms, a lot of them can go upto the 30s(km). 
+
+There is a massive difference in scale between the two.
 
 
 #### Extra Credit: Joining and Variable Names in R
@@ -285,6 +319,6 @@ Look at the variables in `Stations` and `Trips` and explain why `Simple` and `Si
 Optional Extra credit answer here.....
 
 
-
+The starting and ending stations are identified by various names in Simple and Simple2. This keeps things clear when merging the data. Additionally, it guarantees that the right coordinates are utilized while calculating distance. It is obvious which latitude and longitude correspond to the initial station and which to the final station due to the various designations.
 
 
